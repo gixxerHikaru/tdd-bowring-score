@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import calculateTotalScore, { displayFrame, displayScoreInfo } from '~/routes/calcurateScore';
+import { displayScoreInfo } from '~/routes/calcurateScore';
 
 // ふるまい一覧
 // フレームは2投(フレーム内は合計10本まで)
@@ -37,6 +37,19 @@ test('全ての投球がガターの時、合計スコアは0である', () => {
     ],
     totalScore: '0',
   });
+});
+
+test('1投目もしくは2投目がガターの時、1投目はG、2投目は-である', () => {
+  const allZeroFrames = [
+    { firstThrow: 0, secondThrow: 1 },
+    { firstThrow: 2, secondThrow: 0 },
+  ];
+  const result = displayScoreInfo(allZeroFrames).plays;
+
+  expect(result).toStrictEqual([
+    { firstThrow: 'G', secondThrow: '1' },
+    { firstThrow: '2', secondThrow: '-' },
+  ]);
 });
 
 test('全ての投球が1本の時、合計スコアは20である', () => {

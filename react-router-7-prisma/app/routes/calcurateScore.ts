@@ -17,10 +17,30 @@ export function displayScoreInfo(frames: Frame[]): DisplayScoreInfo {
   const totalScore = calculateTotalScore(frames).toString();
 
   const displayPlays: DisplayFrame[] = frames.map(frame => {
+    const formatFirstThrow = (value: number): DisplayFrame['firstThrow'] =>
+      value === 0 ? 'G' : (value.toString() as DisplayFrame['firstThrow']);
+    const formatSecondThrow = (value: number): DisplayFrame['secondThrow'] =>
+      value === 0 ? '-' : (value.toString() as DisplayFrame['secondThrow']);
+
     if (frame.firstThrow === 0 && frame.secondThrow === 0) {
       return { firstThrow: 'G', secondThrow: '-' };
     }
-    return { firstThrow: frame.firstThrow.toString(), secondThrow: frame.secondThrow.toString() };
+    if (frame.firstThrow === 0) {
+      return {
+        firstThrow: 'G',
+        secondThrow: formatSecondThrow(frame.secondThrow),
+      };
+    }
+    if (frame.secondThrow === 0) {
+      return {
+        firstThrow: formatFirstThrow(frame.firstThrow),
+        secondThrow: '-',
+      };
+    }
+    return {
+      firstThrow: formatFirstThrow(frame.firstThrow),
+      secondThrow: formatSecondThrow(frame.secondThrow),
+    };
   });
 
   return { plays: displayPlays, totalScore };
