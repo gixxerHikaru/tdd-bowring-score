@@ -39,19 +39,6 @@ test('全ての投球がガターの時、合計スコアは0である', () => {
   });
 });
 
-test('1投目もしくは2投目がガターの時、1投目はG、2投目は-である', () => {
-  const allZeroFrames = [
-    { firstThrow: 0, secondThrow: 1 },
-    { firstThrow: 2, secondThrow: 0 },
-  ];
-  const result = displayScoreInfo(allZeroFrames).plays;
-
-  expect(result).toStrictEqual([
-    { firstThrow: 'G', secondThrow: '1' },
-    { firstThrow: '2', secondThrow: '-' },
-  ]);
-});
-
 test('全ての投球が1本の時、合計スコアは20である', () => {
   const allOnesFrames = [
     { firstThrow: 1, secondThrow: 1 },
@@ -114,4 +101,45 @@ test('全ての投球が9本の時、合計スコアは180である', () => {
     ],
     totalScore: '180',
   });
+});
+
+test('1投目もしくは2投目がガターの時、1投目はG、2投目は-である', () => {
+  const allZeroFrames = [
+    { firstThrow: 0, secondThrow: 1 },
+    { firstThrow: 2, secondThrow: 0 },
+  ];
+  const result = displayScoreInfo(allZeroFrames).plays;
+
+  expect(result).toStrictEqual([
+    { firstThrow: 'G', secondThrow: '1' },
+    { firstThrow: '2', secondThrow: '-' },
+  ]);
+});
+
+test('1投目が10本の時、1投目はX、2投目はブランクである', () => {
+  const result = displayScoreInfo([{ firstThrow: 10, secondThrow: 0 }]).plays;
+
+  expect(result).toStrictEqual([{ firstThrow: 'X', secondThrow: '' }]);
+});
+
+test.each([
+  { firstThrow: 1, secondThrow: 9 },
+  { firstThrow: 2, secondThrow: 8 },
+  { firstThrow: 3, secondThrow: 7 },
+  { firstThrow: 4, secondThrow: 6 },
+  { firstThrow: 5, secondThrow: 5 },
+  { firstThrow: 6, secondThrow: 4 },
+  { firstThrow: 7, secondThrow: 3 },
+  { firstThrow: 8, secondThrow: 2 },
+  { firstThrow: 9, secondThrow: 1 },
+])('スペアの時、1投目は数字、2投目は／である', frame => {
+  const result = displayScoreInfo([frame]).plays;
+
+  expect(result).toStrictEqual([{ firstThrow: frame.firstThrow.toString(), secondThrow: '／' }]);
+});
+
+test('1投目が0本の時にスペアを取ると、1投目はG、2投目は／である', () => {
+  const result = displayScoreInfo([{ firstThrow: 0, secondThrow: 10 }]).plays;
+
+  expect(result).toStrictEqual([{ firstThrow: 'G', secondThrow: '／' }]);
 });

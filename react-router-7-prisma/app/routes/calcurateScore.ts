@@ -4,8 +4,8 @@ type Frame = {
 };
 
 type DisplayFrame = {
-  firstThrow: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'G';
-  secondThrow: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '-';
+  firstThrow: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'G' | 'X';
+  secondThrow: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '-' | '';
 };
 
 type DisplayScoreInfo = {
@@ -22,8 +22,14 @@ export function displayScoreInfo(frames: Frame[]): DisplayScoreInfo {
     const formatSecondThrow = (value: number): DisplayFrame['secondThrow'] =>
       value === 0 ? '-' : (value.toString() as DisplayFrame['secondThrow']);
 
+    if (frame.firstThrow === 10) {
+      return { firstThrow: 'X', secondThrow: '' };
+    }
     if (frame.firstThrow === 0 && frame.secondThrow === 0) {
       return { firstThrow: 'G', secondThrow: '-' };
+    }
+    if (frame.firstThrow + frame.secondThrow === 10) {
+      return { firstThrow: formatFirstThrow(frame.firstThrow), secondThrow: '／' };
     }
     if (frame.firstThrow === 0) {
       return {
