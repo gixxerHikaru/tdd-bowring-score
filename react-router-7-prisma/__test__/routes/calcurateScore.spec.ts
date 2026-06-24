@@ -154,3 +154,95 @@ test('1投目が0本の時にスペアを取ると、1投目はG、2投目は／
   expect(resultFirstThrows).toContain('G');
   expect(resultSecondThrows).toContain('／');
 });
+
+test.each([
+  { firstThrow: 0, secondThrow: 1 },
+  { firstThrow: 0, secondThrow: 2 },
+  { firstThrow: 0, secondThrow: 3 },
+  { firstThrow: 0, secondThrow: 4 },
+  { firstThrow: 0, secondThrow: 5 },
+  { firstThrow: 0, secondThrow: 6 },
+  { firstThrow: 0, secondThrow: 7 },
+  { firstThrow: 0, secondThrow: 8 },
+  { firstThrow: 0, secondThrow: 9 },
+  { firstThrow: 0, secondThrow: 0 },
+])(
+  'ストライクを取ったあと、次のフレームの投球の合計がボーナスとしてフレームの合計スコアに加算される※ストライク連続は除く',
+  secondFrame => {
+    const result = displayScoreInfo([{ firstThrow: 10, secondThrow: 0 }, secondFrame]).plays;
+    const resultTotalScores = result.map(frame => frame.currentTotalScore);
+
+    const expectedTotalScore = secondFrame.firstThrow + secondFrame.secondThrow + 10;
+    expect(resultTotalScores[0]).toBe(expectedTotalScore.toString());
+  }
+);
+
+test.each([
+  { firstThrow: 1, secondThrow: 9 },
+  { firstThrow: 2, secondThrow: 8 },
+  { firstThrow: 3, secondThrow: 7 },
+  { firstThrow: 4, secondThrow: 6 },
+  { firstThrow: 5, secondThrow: 5 },
+  { firstThrow: 6, secondThrow: 4 },
+  { firstThrow: 7, secondThrow: 3 },
+  { firstThrow: 8, secondThrow: 2 },
+  { firstThrow: 9, secondThrow: 1 },
+  { firstThrow: 0, secondThrow: 10 },
+])(
+  'スペアを取ったあと、次のフレームの最初の投球がボーナスとしてフレームの合計スコアに加算される',
+  secondFrame => {
+    const result = displayScoreInfo([{ firstThrow: 1, secondThrow: 9 }, secondFrame]).plays;
+    const resultTotalScores = result.map(frame => frame.currentTotalScore);
+
+    const expectedTotalScore = secondFrame.firstThrow + 10;
+    expect(resultTotalScores[0]).toBe(expectedTotalScore.toString());
+  }
+);
+
+test('ストライクを連続で取ると、合計スコアは20の倍数になる', () => {
+  const result = displayScoreInfo([
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+  ]).plays;
+  const resultTotalScores = result.map(frame => frame.currentTotalScore);
+
+  expect(resultTotalScores[0]).toBe('20');
+  expect(resultTotalScores[1]).toBe('40');
+  expect(resultTotalScores[2]).toBe('60');
+  expect(resultTotalScores[3]).toBe('80');
+  expect(resultTotalScores[4]).toBe('100');
+  expect(resultTotalScores[5]).toBe('120');
+  expect(resultTotalScores[6]).toBe('140');
+  expect(resultTotalScores[7]).toBe('160');
+});
+
+test('スペアを連続で取り、次のフレームの数が1~9と増えていくと、合計スコアは13から1ずつ増えた合計となる', () => {
+  const result = displayScoreInfo([
+    { firstThrow: 1, secondThrow: 9 },
+    { firstThrow: 2, secondThrow: 8 },
+    { firstThrow: 3, secondThrow: 7 },
+    { firstThrow: 4, secondThrow: 6 },
+    { firstThrow: 5, secondThrow: 5 },
+    { firstThrow: 6, secondThrow: 4 },
+    { firstThrow: 7, secondThrow: 3 },
+    { firstThrow: 8, secondThrow: 2 },
+    { firstThrow: 9, secondThrow: 1 },
+  ]).plays;
+  const resultTotalScores = result.map(frame => frame.currentTotalScore);
+
+  expect(resultTotalScores[0]).toBe('12');
+  expect(resultTotalScores[1]).toBe('25');
+  expect(resultTotalScores[2]).toBe('39');
+  expect(resultTotalScores[3]).toBe('54');
+  expect(resultTotalScores[4]).toBe('70');
+  expect(resultTotalScores[5]).toBe('87');
+  expect(resultTotalScores[6]).toBe('105');
+  expect(resultTotalScores[7]).toBe('124');
+});

@@ -17,8 +17,20 @@ type DisplayScoreInfo = {
 export function displayScoreInfo(frames: Frame[]): DisplayScoreInfo {
   const totalScore = calculateTotalScore(frames).toString();
 
+  const rawFramseScore = frames.map(frame => frame.firstThrow + frame.secondThrow);
+  const framesScore = rawFramseScore.map((score, index) => {
+    const nextFrame = frames[index + 1];
+    if (nextFrame) {
+      if (frames[index].firstThrow === 10) {
+        return score + nextFrame.firstThrow + nextFrame.secondThrow;
+      } else if (frames[index].firstThrow + frames[index].secondThrow === 10) {
+        return score + nextFrame.firstThrow;
+      }
+    }
+    return score;
+  });
+
   let cumulativeScore = 0;
-  const framesScore = frames.map(frame => frame.firstThrow + frame.secondThrow);
   const cumulativeScores = framesScore.map(score => {
     cumulativeScore += score;
     return cumulativeScore;
