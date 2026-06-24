@@ -154,3 +154,25 @@ test('1投目が0本の時にスペアを取ると、1投目はG、2投目は／
   expect(resultFirstThrows).toContain('G');
   expect(resultSecondThrows).toContain('／');
 });
+
+test('1フレーム目でストライクを取ったあと、2フレーム目で1本→8本倒すと、1フレーム目の合計スコアは19、2フレーム目の合計スコアは28である', () => {
+  const result = displayScoreInfo([
+    { firstThrow: 1, secondThrow: 9 },
+    { firstThrow: 0, secondThrow: 9 },
+  ]).plays;
+  const resultTotalScores = result.map(frame => frame.currentTotalScore);
+
+  expect(resultTotalScores[0]).toBe('19');
+  expect(resultTotalScores[1]).toBe('28');
+});
+
+test('1フレーム目でスペアを取ったあと、2フレーム目で1本→8本倒すと、1フレーム目の合計スコア11は、2フレーム目の合計スコアは20である', () => {
+  const result = displayScoreInfo([
+    { firstThrow: 1, secondThrow: 9 },
+    { firstThrow: 0, secondThrow: 9 },
+  ]).plays;
+  const resultTotalScores = result.map(frame => frame.currentTotalScore);
+
+  expect(resultTotalScores[0]).toBe('11');
+  expect(resultTotalScores[1]).toBe('20');
+});
