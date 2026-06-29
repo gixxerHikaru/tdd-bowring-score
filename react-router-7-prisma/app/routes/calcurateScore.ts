@@ -1,20 +1,31 @@
-type Frame = {
+export type Frame = {
   firstThrow: number;
   secondThrow: number;
 };
 
-type DisplayFrame = {
+export type FinalFrame = Frame & {
+  thirdThrow: number;
+};
+
+export type DisplayFrame = {
   firstThrow: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'G' | 'X';
   secondThrow: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '-' | '' | '／';
   currentTotalScore: string;
 };
 
-type DisplayScoreInfo = {
-  plays: DisplayFrame[];
+export type FinalDisplayFrame = {
+  firstThrow: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'G' | 'X';
+  secondThrow: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '-' | 'X' | '／';
+  thirdThrow: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '-' | 'X';
+  currentTotalScore: string;
+};
+
+export type DisplayScoreInfo = {
+  plays: (DisplayFrame | FinalDisplayFrame)[];
   totalScore: string;
 };
 
-export function displayScoreInfo(frames: Frame[]): DisplayScoreInfo {
+export function displayScoreInfo(frames: Frame[] | FinalFrame[]): DisplayScoreInfo {
   const totalScore = calculateTotalScore(frames).toString();
 
   const rawFramseScore = frames.map(frame => frame.firstThrow + frame.secondThrow);
@@ -36,12 +47,38 @@ export function displayScoreInfo(frames: Frame[]): DisplayScoreInfo {
     return cumulativeScore;
   });
 
-  const displayPlays: DisplayFrame[] = frames.map((frame, index) => {
+  const displayPlays: (DisplayFrame | FinalDisplayFrame)[] = frames.map((frame, index) => {
+    const formatTotalScore = cumulativeScores[index].toString();
+
     const formatFirstThrow = (value: number): DisplayFrame['firstThrow'] =>
       value === 0 ? 'G' : (value.toString() as DisplayFrame['firstThrow']);
     const formatSecondThrow = (value: number): DisplayFrame['secondThrow'] =>
       value === 0 ? '-' : (value.toString() as DisplayFrame['secondThrow']);
-    const formatTotalScore = cumulativeScores[index].toString();
+    if (index === 9) {
+      const lastFrame = frames[9] as FinalFrame;
+      const formatThirdThrow = (value: number): FinalDisplayFrame['thirdThrow'] =>
+        value === 0
+          ? '-'
+          : value === 10
+            ? 'X'
+            : (value.toString() as FinalDisplayFrame['thirdThrow']);
+
+      if (frame.firstThrow === 10) {
+        return {
+          firstThrow: 'X',
+          secondThrow: formatSecondThrow(lastFrame.secondThrow),
+          thirdThrow: formatThirdThrow(lastFrame.thirdThrow),
+          currentTotalScore: formatTotalScore,
+        };
+      } else if (frame.firstThrow + frame.secondThrow === 10) {
+        return {
+          firstThrow: formatFirstThrow(frame.firstThrow),
+          secondThrow: '／',
+          thirdThrow: formatThirdThrow(lastFrame.thirdThrow),
+          currentTotalScore: formatTotalScore,
+        };
+      }
+    }
 
     if (frame.firstThrow === 10) {
       return { firstThrow: 'X', secondThrow: '', currentTotalScore: formatTotalScore };
