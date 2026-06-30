@@ -110,6 +110,102 @@ test('全ての投球が9本の時、合計スコアは180である', () => {
   });
 });
 
+test('全ての投球が10本の時、合計スコアは300である', () => {
+  const allOnesFrames = [
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 0 },
+    { firstThrow: 10, secondThrow: 10, thirdThrow: 10 } as FinalFrame,
+  ];
+  const result = displayScoreInfo(allOnesFrames);
+
+  expect(result).toStrictEqual({
+    plays: [
+      { firstThrow: 'X', secondThrow: '', currentTotalScore: '30' },
+      { firstThrow: 'X', secondThrow: '', currentTotalScore: '60' },
+      { firstThrow: 'X', secondThrow: '', currentTotalScore: '90' },
+      { firstThrow: 'X', secondThrow: '', currentTotalScore: '120' },
+      { firstThrow: 'X', secondThrow: '', currentTotalScore: '150' },
+      { firstThrow: 'X', secondThrow: '', currentTotalScore: '180' },
+      { firstThrow: 'X', secondThrow: '', currentTotalScore: '210' },
+      { firstThrow: 'X', secondThrow: '', currentTotalScore: '240' },
+      { firstThrow: 'X', secondThrow: '', currentTotalScore: '270' },
+      { firstThrow: 'X', secondThrow: 'X', thirdThrow: 'X', currentTotalScore: '300' },
+    ],
+    totalScore: '300',
+  });
+});
+
+test('全ての投球が0,10のスペアの時、合計スコアは110である', () => {
+  const allOnesFrames = [
+    { firstThrow: 0, secondThrow: 10 },
+    { firstThrow: 0, secondThrow: 10 },
+    { firstThrow: 0, secondThrow: 10 },
+    { firstThrow: 0, secondThrow: 10 },
+    { firstThrow: 0, secondThrow: 10 },
+    { firstThrow: 0, secondThrow: 10 },
+    { firstThrow: 0, secondThrow: 10 },
+    { firstThrow: 0, secondThrow: 10 },
+    { firstThrow: 0, secondThrow: 10 },
+    { firstThrow: 0, secondThrow: 10, thirdThrow: 10 } as FinalFrame,
+  ];
+  const result = displayScoreInfo(allOnesFrames);
+
+  expect(result).toStrictEqual({
+    plays: [
+      { firstThrow: 'G', secondThrow: '／', currentTotalScore: '10' },
+      { firstThrow: 'G', secondThrow: '／', currentTotalScore: '20' },
+      { firstThrow: 'G', secondThrow: '／', currentTotalScore: '30' },
+      { firstThrow: 'G', secondThrow: '／', currentTotalScore: '40' },
+      { firstThrow: 'G', secondThrow: '／', currentTotalScore: '50' },
+      { firstThrow: 'G', secondThrow: '／', currentTotalScore: '60' },
+      { firstThrow: 'G', secondThrow: '／', currentTotalScore: '70' },
+      { firstThrow: 'G', secondThrow: '／', currentTotalScore: '80' },
+      { firstThrow: 'G', secondThrow: '／', currentTotalScore: '90' },
+      { firstThrow: 'G', secondThrow: '／', thirdThrow: 'X', currentTotalScore: '110' },
+    ],
+    totalScore: '110',
+  });
+});
+
+test('スペアの時、合計スコアは正しい', () => {
+  const spareFrames = [
+    { firstThrow: 1, secondThrow: 9 },
+    { firstThrow: 2, secondThrow: 8 },
+    { firstThrow: 3, secondThrow: 7 },
+    { firstThrow: 4, secondThrow: 6 },
+    { firstThrow: 5, secondThrow: 5 },
+    { firstThrow: 6, secondThrow: 4 },
+    { firstThrow: 7, secondThrow: 3 },
+    { firstThrow: 8, secondThrow: 2 },
+    { firstThrow: 9, secondThrow: 1 },
+    { firstThrow: 0, secondThrow: 10, thirdThrow: 10 } as FinalFrame,
+  ];
+  const result = displayScoreInfo(spareFrames);
+
+  expect(result).toStrictEqual({
+    plays: [
+      { firstThrow: '1', secondThrow: '／', currentTotalScore: '12' },
+      { firstThrow: '2', secondThrow: '／', currentTotalScore: '25' },
+      { firstThrow: '3', secondThrow: '／', currentTotalScore: '39' },
+      { firstThrow: '4', secondThrow: '／', currentTotalScore: '54' },
+      { firstThrow: '5', secondThrow: '／', currentTotalScore: '70' },
+      { firstThrow: '6', secondThrow: '／', currentTotalScore: '87' },
+      { firstThrow: '7', secondThrow: '／', currentTotalScore: '105' },
+      { firstThrow: '8', secondThrow: '／', currentTotalScore: '124' },
+      { firstThrow: '9', secondThrow: '／', currentTotalScore: '134' },
+      { firstThrow: 'G', secondThrow: '／', thirdThrow: 'X', currentTotalScore: '154' },
+    ],
+    totalScore: '154',
+  });
+});
+
 test('1投目もしくは2投目がガターの時、1投目はG、2投目は-である', () => {
   const allZeroFrames = [
     { firstThrow: 0, secondThrow: 1 },

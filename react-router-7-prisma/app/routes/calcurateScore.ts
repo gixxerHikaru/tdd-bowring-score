@@ -35,8 +35,6 @@ export function displayScoreInfo(frames: Frame[] | FinalFrame[]): DisplayScoreIn
     }
     return frame.firstThrow + frame.secondThrow;
   });
-  const totalFrameScore = rawFramseScore.reduce((acc, score) => acc + score, 0);
-  const totalScore = totalFrameScore.toString();
   const framesScore = rawFramseScore.map((score, index) => {
     const nextFrame = frames[index + 1];
     const nextNextFrame = frames[index + 2];
@@ -58,6 +56,8 @@ export function displayScoreInfo(frames: Frame[] | FinalFrame[]): DisplayScoreIn
     cumulativeScore += score;
     return cumulativeScore;
   });
+
+  const totalScore = cumulativeScores[cumulativeScores.length - 1].toString();
 
   const displayPlays: (DisplayFrame | FinalDisplayFrame)[] = frames.map((frame, index) => {
     const formatTotalScore = cumulativeScores[index].toString();
