@@ -26,8 +26,6 @@ export type DisplayScoreInfo = {
 };
 
 export function displayScoreInfo(frames: Frame[] | FinalFrame[]): DisplayScoreInfo {
-  const totalScore = calculateTotalScore(frames).toString();
-
   const rawFramseScore = frames.map((frame, index) => {
     if (index === 9) {
       const lastFrame = frames[9] as FinalFrame;
@@ -37,6 +35,8 @@ export function displayScoreInfo(frames: Frame[] | FinalFrame[]): DisplayScoreIn
     }
     return frame.firstThrow + frame.secondThrow;
   });
+  const totalFrameScore = rawFramseScore.reduce((acc, score) => acc + score, 0);
+  const totalScore = totalFrameScore.toString();
   const framesScore = rawFramseScore.map((score, index) => {
     const nextFrame = frames[index + 1];
     const nextNextFrame = frames[index + 2];
@@ -127,14 +127,4 @@ export function displayScoreInfo(frames: Frame[] | FinalFrame[]): DisplayScoreIn
   });
 
   return { plays: displayPlays, totalScore };
-}
-
-export default function calculateTotalScore(frames: Frame[]) {
-  let totalScore = 0;
-
-  frames.forEach(frame => {
-    totalScore += frame.firstThrow + frame.secondThrow;
-  });
-
-  return totalScore;
 }
