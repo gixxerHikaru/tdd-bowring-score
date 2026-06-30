@@ -206,7 +206,7 @@ test.each([
   }
 );
 
-test('ストライクを連続で取ると、合計スコアは20の倍数になる', () => {
+test('ストライクを連続で取ると、合計スコアは30の倍数になる', () => {
   const result = displayScoreInfo([
     { firstThrow: 10, secondThrow: 0 },
     { firstThrow: 10, secondThrow: 0 },
@@ -220,14 +220,14 @@ test('ストライクを連続で取ると、合計スコアは20の倍数にな
   ]).plays;
   const resultTotalScores = result.map(frame => frame.currentTotalScore);
 
-  expect(resultTotalScores[0]).toBe('20');
-  expect(resultTotalScores[1]).toBe('40');
-  expect(resultTotalScores[2]).toBe('60');
-  expect(resultTotalScores[3]).toBe('80');
-  expect(resultTotalScores[4]).toBe('100');
-  expect(resultTotalScores[5]).toBe('120');
-  expect(resultTotalScores[6]).toBe('140');
-  expect(resultTotalScores[7]).toBe('160');
+  expect(resultTotalScores[0]).toBe('30');
+  expect(resultTotalScores[1]).toBe('60');
+  expect(resultTotalScores[2]).toBe('90');
+  expect(resultTotalScores[3]).toBe('120');
+  expect(resultTotalScores[4]).toBe('150');
+  expect(resultTotalScores[5]).toBe('180');
+  expect(resultTotalScores[6]).toBe('210');
+  expect(resultTotalScores[7]).toBe('230');
 });
 
 test('スペアを連続で取り、次のフレームの数が1~9と増えていくと、合計スコアは13から1ずつ増えた合計となる', () => {

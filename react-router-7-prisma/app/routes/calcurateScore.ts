@@ -28,11 +28,23 @@ export type DisplayScoreInfo = {
 export function displayScoreInfo(frames: Frame[] | FinalFrame[]): DisplayScoreInfo {
   const totalScore = calculateTotalScore(frames).toString();
 
-  const rawFramseScore = frames.map(frame => frame.firstThrow + frame.secondThrow);
+  const rawFramseScore = frames.map((frame, index) => {
+    if (index === 9) {
+      const lastFrame = frames[9] as FinalFrame;
+      if (lastFrame.firstThrow === 10 || lastFrame.firstThrow + lastFrame.secondThrow === 10) {
+        return lastFrame.firstThrow + lastFrame.secondThrow + lastFrame.thirdThrow;
+      }
+    }
+    return frame.firstThrow + frame.secondThrow;
+  });
   const framesScore = rawFramseScore.map((score, index) => {
     const nextFrame = frames[index + 1];
+    const nextNextFrame = frames[index + 2];
     if (nextFrame) {
       if (frames[index].firstThrow === 10) {
+        if (nextNextFrame && nextFrame.firstThrow === 10) {
+          return score + nextFrame.firstThrow + nextNextFrame.firstThrow;
+        }
         return score + nextFrame.firstThrow + nextFrame.secondThrow;
       } else if (frames[index].firstThrow + frames[index].secondThrow === 10) {
         return score + nextFrame.firstThrow;
@@ -66,7 +78,7 @@ export function displayScoreInfo(frames: Frame[] | FinalFrame[]): DisplayScoreIn
       if (frame.firstThrow === 10) {
         return {
           firstThrow: 'X',
-          secondThrow: formatSecondThrow(lastFrame.secondThrow),
+          secondThrow: frame.secondThrow === 10 ? 'X' : formatSecondThrow(lastFrame.secondThrow),
           thirdThrow: formatThirdThrow(lastFrame.thirdThrow),
           currentTotalScore: formatTotalScore,
         };
